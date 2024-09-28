@@ -9,8 +9,7 @@ def read_audio_file(file_path):
     audio = AudioSegment.from_file(file_path)
     wav_path = "temp_audio.wav"
     audio.export(wav_path, format="wav")
-    
-    # Load the WAV file for transcription
+
     return wav_path
 
 def transcribe_audio(file_path, speech_client):
@@ -33,23 +32,27 @@ def transcribe_audio(file_path, speech_client):
     
     return transcript
 
-def process_with_llm(transcript, llm):
-    # Process the transcription with the local LLM
-    response = llm(transcript, max_length=200, num_return_sequences=1)
-    processed_text = response[0]["generated_text"]
-    
-    return processed_text
+def process_with_llm(transcript, llm, device):
+    response = llm.generate(
+        transcript,
+        max_length=50,
+        num_return_sequences=1,
+        no_repeat_ngram_size=2,
+        do_sample=True,
+        top_k=50,
+        top_p=0.95,
+        temperature=1.0,
+    )    
+    return response
 
-def convert_text_to_speech(text, output_audio_file, tts_client):
+def convert_text_to_speech(text, output_audio_file, tts_client, device):
     # Prepare the input for Google Text-to-Speech API
     synthesis_input = texttospeech.SynthesisInput(text=text)
 
-    # Select the voice and language
+    # Config
     voice = texttospeech.VoiceSelectionParams(
         language_code="en-US", name="en-US-Wavenet-D"
     )
-
-    # Select the audio configuration
     audio_config = texttospeech.AudioConfig(
         audio_encoding=texttospeech.AudioEncoding.MP3
     )
