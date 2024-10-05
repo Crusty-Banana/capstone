@@ -2,3 +2,5 @@ __pycache__
 venv
 serviceAcc.json
 server_setting
+input_audio/*
+output_audio/*

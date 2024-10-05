@@ -6,16 +6,19 @@
     <title>Voice Recorder</title>
 </head>
 <body>
-    <h2>Voice Recorder</h2>
-    <button id="recordButton">Record</button>
-    <button id="stopButton" disabled>Stop</button>
-    <audio id="audioPlayback" controls></audio>
-    <button id="sendButton" disabled>Send</button>
-
-    <!-- New section for file upload -->
-    <h3>Upload Audio File</h3>
-    <input type="file" id="fileInput" accept="audio/*">
-    <button id="uploadButton" disabled>Upload</button>
+    <div>
+        <h2>Voice Recorder</h2>
+        <button id="recordButton">Record</button>
+        <button id="stopButton" disabled>Stop</button>
+        <audio id="audioPreview" controls></audio>
+        <button id="sendButton" disabled>Send</button>
+    </div>
+    <div>
+        <h3>Voice output</h3>
+        <audio id="audioOutput" controls></audio>
+        <h4>Time taken: <span id="timeTaken"></span> seconds</h4>
+        
+    </div>
 
     <script>
         let mediaRecorder;
@@ -25,9 +28,11 @@
         const recordButton = document.getElementById('recordButton');
         const stopButton = document.getElementById('stopButton');
         const sendButton = document.getElementById('sendButton');
-        const audioPlayback = document.getElementById('audioPlayback');
+        const audioPreview = document.getElementById('audioPreview');
+        const audioOutput = document.getElementById('audioOutput');
         const fileInput = document.getElementById('fileInput');
         const uploadButton = document.getElementById('uploadButton');
+        const timeTakenElement = document.getElementById('timeTaken');
 
         recordButton.addEventListener('click', async () => {
             const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -43,7 +48,7 @@
 
                 // Set the audio playback source to the recorded audio
                 const audioURL = URL.createObjectURL(audioBlob);
-                audioPlayback.src = audioURL;
+                audioPreview.src = audioURL;
 
                 // Enable the send button
                 sendButton.disabled = false;
@@ -62,6 +67,7 @@
         });
 
         sendButton.addEventListener('click', async () => {
+            const startTime = performance.now();
             // Send the audioBlob to the backend
             const formData = new FormData();
             formData.append('audio', audioBlob, 'recording.webm');
@@ -73,44 +79,18 @@
 
             const responseBlob = await response.blob();
 
+            // Calc time takn
+            const endTime = performance.now();
+            const timeTaken = Math.round(endTime - startTime);
+            timeTakenElement.textContent = timeTaken / 1000;
+
             // Play the returned audio
             const audioURL = URL.createObjectURL(responseBlob);
-            audioPlayback.src = audioURL;
+            audioOutput.src = audioURL;
+            audioOutput.play();
 
             // Disable the send button after sending
             sendButton.disabled = true;
-        });
-
-        // Upload button functionality
-        uploadButton.addEventListener('click', async () => {
-            const file = fileInput.files[0];
-            if (!file) {
-                alert("Please select a file to upload.");
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('audio', file, file.name);
-
-            const response = await fetch('https://machinelearning.vinunilegacy.com/api/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            const responseBlob = await response.blob();
-
-            // Play the returned audio
-            const audioURL = URL.createObjectURL(responseBlob);
-            audioPlayback.src = audioURL;
-
-            // Reset file input and disable upload button after sending
-            fileInput.value = '';
-            uploadButton.disabled = true;
-        });
-
-        // Enable upload button when a file is selected
-        fileInput.addEventListener('change', () => {
-            uploadButton.disabled = !fileInput.files.length;
         });
     </script>
 </body>
