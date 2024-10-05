@@ -67,3 +67,4 @@ def convert_text_to_speech(text, output_audio_file, tts_client, device):
         out.write(response.audio_content)
     
     print(f"Audio content written to file {output_audio_file}")
+    return response
