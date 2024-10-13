@@ -1,6 +1,10 @@
 __pycache__
 venv
+venv310
 serviceAcc.json
 server_setting
 input_audio/*
 output_audio/*
+Capstone-Medical-Assistant
+credentials
+frontend/streamingInput.js
