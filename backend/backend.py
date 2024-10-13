@@ -3,9 +3,9 @@ from test_framework import inference
 from helpers import transcribe_audio, process_with_llm, convert_text_to_speech
 import ffmpeg
 
-input_audio_path = "/home/LENOVO/capstone/input_audio/input_audio.wav"
-fixed_audio_path = "/home/LENOVO/capstone/input_audio/fixed_audio.wav"
-output_audio_path = "/home/LENOVO/capstone/output_audio/output_audio.wav"
+input_audio_path = "/home/LENOVO/capstone/backend/input_audio/input_audio.wav"
+fixed_audio_path = "/home/LENOVO/capstone/backend/input_audio/fixed_audio.wav"
+output_audio_path = "/home/LENOVO/capstone/backend/output_audio/output_audio.wav"
 
 app = Flask(__name__)
 app.config["UPLOAD_FOLDER"] = "recordings/"
